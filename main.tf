@@ -6,7 +6,7 @@ resource "null_resource" "copy_source" {
     command = <<EOF
 if [ ! -d "build" ]; then
   if [ ! -L "build" ]; then
-    curl -L https://github.com/Widen/cloudfront-auth/archive/master.zip --output cloudfront-auth-master.zip
+    curl -L https://github.com/ccsplit/cloudfront-auth/archive/master.zip --output cloudfront-auth-master.zip
     unzip -q cloudfront-auth-master.zip -d build/
     mkdir build/cloudfront-auth-master/distributions
 
