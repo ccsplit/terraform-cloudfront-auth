@@ -31,6 +31,12 @@ variable "hd" {
   default     = null
 }
 
+variable "base_url" {
+  type        = string
+  description = "The base url to use for the Oauth/OIDC Url."
+  default     = ""
+}
+
 variable "session_duration" {
   type        = number
   default     = 1
