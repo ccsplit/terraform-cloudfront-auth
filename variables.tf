@@ -1,7 +1,7 @@
 
 variable "auth_vendor" {
   type        = string
-  description = "The vendor to use for authorisation (google, microsoft, github, okta, auth0, centrify)"
+  description = "The vendor to use for authorisation (google, microsoft, github, okta, auth0, centrify, onelogin)"
 }
 
 variable "cloudfront_distribution" {
@@ -40,7 +40,7 @@ variable "session_duration" {
 variable "authz" {
   type        = string
   default     = "1"
-  description = "The authorisation method (google, microsoft only). Mirosoft: (1) Azure AD Login (default)\n   (2) JSON Username Lookup\n\n Google: (1) Hosted Domain - verify email's domain matches that of the given hosted domain\n   (2) HTTP Email Lookup - verify email exists in JSON array located at given HTTP endpoint\n   (3) Google Groups Lookup - verify email exists in one of given Google Groups"
+  description = "The authorisation method (google, microsoft only). Microsoft: (1) Azure AD Login (default)\n   (2) JSON Username Lookup\n\n Google: (1) Hosted Domain - verify email's domain matches that of the given hosted domain\n   (2) HTTP Email Lookup - verify email exists in JSON array located at given HTTP endpoint\n   (3) Google Groups Lookup - verify email exists in one of given Google Groups"
 }
 
 variable "github_organization" {
