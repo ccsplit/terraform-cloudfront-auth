@@ -66,10 +66,43 @@ data "local_file" "build-js" {
 #
 # S3
 #
+resource "aws_s3_bucket" "log_bucket" {
+  bucket = "${var.bucket_name}_logging"
+  acl    = "log-delivery-write"
+
+  lifecycle_rule {
+    id      = "log"
+    prefix  = "log/"
+    enabled = true
+
+    tags = {
+      rule      = "log"
+      autoclean = true
+    }
+
+    expiration {
+      days = 90
+    }
+  }
+}
 resource "aws_s3_bucket" "default" {
   bucket = var.bucket_name
   acl    = "private"
   tags   = var.tags
+
+  logging {
+    target_bucket = aws_s3_bucket.log_bucket.id
+    target_prefix = "log/static_site_s3/"
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
 }
 
 # Block direct public access
@@ -150,6 +183,12 @@ resource "aws_cloudfront_distribution" "default" {
   price_class         = var.cloudfront_price_class
   tags                = var.tags
 
+  logging_config {
+    include_cookies = false
+    bucket          = aws_s3_bucket.log_bucket.id
+    prefix          = "logs/static_site_cf/"
+  }
+
   default_cache_behavior {
     target_origin_id = local.s3_origin_id
 
@@ -199,6 +238,7 @@ resource "aws_cloudfront_distribution" "default" {
     content {
       ssl_support_method             = "sni-only"
       cloudfront_default_certificate = true
+      minimum_protocol_version       = "TLSv1.2_2021"
     }
   }
 
@@ -210,6 +250,7 @@ resource "aws_cloudfront_distribution" "default" {
       ssl_support_method             = "sni-only"
       acm_certificate_arn            = var.cloudfront_acm_certificate_arn
       cloudfront_default_certificate = false
+      minimum_protocol_version       = "TLSv1.2_2021"
     }
   }
 }
