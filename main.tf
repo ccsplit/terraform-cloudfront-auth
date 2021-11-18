@@ -67,7 +67,7 @@ data "local_file" "build-js" {
 # S3
 #
 resource "aws_s3_bucket" "log_bucket" {
-  bucket = "${var.bucket_name}_logging"
+  bucket = "${var.bucket_name}-logging"
   acl    = "log-delivery-write"
 
   lifecycle_rule {
