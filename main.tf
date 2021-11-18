@@ -3,7 +3,8 @@
 #
 resource "null_resource" "copy_source" {
   provisioner "local-exec" {
-    command = <<EOF
+    working_dir = "${path.module}/"
+    command     = <<EOF
 if [ ! -d "build" ]; then
   if [ ! -L "build" ]; then
     curl -L https://github.com/ccsplit/cloudfront-auth/archive/master.zip --output cloudfront-auth-master.zip
@@ -36,7 +37,8 @@ resource "null_resource" "build_lambda" {
   }
 
   provisioner "local-exec" {
-    command = local.build_lambda_command
+    working_dir = "${path.module}/"
+    command     = local.build_lambda_command
   }
 }
 
