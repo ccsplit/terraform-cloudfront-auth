@@ -19,13 +19,16 @@ EOF
   }
 }
 
-# Builds the Lambda zip artifact
-resource "null_resource" "build_lambda" {
-  depends_on = [null_resource.copy_source]
-
+data "null_resource" "wait_on_copy_source" {
   inputs = {
     copy_source_id = "${null_resource.copy_source.id}"
   }
+}
+
+# Builds the Lambda zip artifact
+resource "null_resource" "build_lambda" {
+  depends_on = [data.null_resource.wait_on_copy_source]
+
 
   # Trigger a rebuild on any variable change
   triggers = {
