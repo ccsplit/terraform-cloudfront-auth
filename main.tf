@@ -23,6 +23,10 @@ EOF
 resource "null_resource" "build_lambda" {
   depends_on = [null_resource.copy_source]
 
+  inputs = {
+    copy_source_id = "${null_resource.copy_source.id}"
+  }
+
   # Trigger a rebuild on any variable change
   triggers = {
     vendor                  = var.auth_vendor
