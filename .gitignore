@@ -6,4 +6,3 @@
 *.tfstate.backup
 *.tfvars
 *.zip
-build/
