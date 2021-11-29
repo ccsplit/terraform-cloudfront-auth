@@ -1,35 +1,8 @@
 #
 # Lambda Packaging
 #
-resource "null_resource" "copy_source" {
-  provisioner "local-exec" {
-    working_dir = "${path.module}/"
-    command     = <<EOF
-if [ ! -d "build" ]; then
-  if [ ! -L "build" ]; then
-    curl -L https://github.com/ccsplit/cloudfront-auth/archive/master.zip --output cloudfront-auth-master.zip
-    unzip -q cloudfront-auth-master.zip -d build/
-    mkdir build/cloudfront-auth-master/distributions
-
-    cp ${data.local_file.build-js.filename} build/cloudfront-auth-master/build/build.js
-    cd build/cloudfront-auth-master && npm i minimist && npm install && cd build && npm install
-  fi
-fi
-EOF
-  }
-}
-
-data "null_resource" "wait_on_copy_source" {
-  inputs = {
-    copy_source_id = "${null_resource.copy_source.id}"
-  }
-}
-
 # Builds the Lambda zip artifact
 resource "null_resource" "build_lambda" {
-  depends_on = [data.null_resource.wait_on_copy_source]
-
-
   # Trigger a rebuild on any variable change
   triggers = {
     vendor                  = var.auth_vendor
