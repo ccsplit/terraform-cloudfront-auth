@@ -1,3 +1,4 @@
 [submodule "build/cloudfront-auth"]
 	path = build/cloudfront-auth
 	url = https://github.com/ccsplit/cloudfront-auth
+	branch = master
