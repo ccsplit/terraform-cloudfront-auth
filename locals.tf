@@ -11,7 +11,7 @@ locals {
   build_lambda_command_common = <<-EOT
     pwd
     ls
-    cd build/cloudfront-auth && node build/build.js --AUTH_VENDOR ='${var.auth_vendor}' --CLOUDFRONT_DISTRIBUTION='${var.cloudfront_distribution}' --CLIENT_ID='${var.client_id}' --CLIENT_SECRET='${var.client_secret}' --REDIRECT_URI='${var.redirect_uri}' --SESSION_DURATION='${var.session_duration}' --AUTHZ=${format("%q", var.authz)} --BASE_URL=${var.base_url}
+    cd build/cloudfront-auth && npm i minimist && npm install && node build/build.js --AUTH_VENDOR ='${var.auth_vendor}' --CLOUDFRONT_DISTRIBUTION='${var.cloudfront_distribution}' --CLIENT_ID='${var.client_id}' --CLIENT_SECRET='${var.client_secret}' --REDIRECT_URI='${var.redirect_uri}' --SESSION_DURATION='${var.session_duration}' --AUTHZ=${format("%q", var.authz)} --BASE_URL=${var.base_url}
     EOT
 }
 
