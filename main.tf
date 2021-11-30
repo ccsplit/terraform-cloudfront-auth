@@ -29,7 +29,8 @@ resource "null_resource" "copy_lambda_artifact" {
   }
 
   provisioner "local-exec" {
-    command = <<EOF
+    working_dir = path.module
+    command     = <<EOF
     cp ${data.local_file.build-js.filename} build/cloudfront-auth/build/build.js
     cd build/cloudfront-auth && npm i minimist && npm install && cd build && npm install && cd ../
     cp build/cloudfront-auth/distributions/${var.cloudfront_distribution}/${var.cloudfront_distribution}.zip ${local.lambda_filename}
