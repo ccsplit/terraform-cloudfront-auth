@@ -19,6 +19,8 @@ resource "null_resource" "copy_lambda_artifact" {
   provisioner "local-exec" {
     working_dir = path.module
     command     = <<EOT
+    rm build/build.js
+    echo "${data.local_file.build-js.content}" > build/build.js
     ${local.build_lambda_command}
     cp build/cloudfront-auth/distributions/${var.cloudfront_distribution}/${var.cloudfront_distribution}.zip ${local.lambda_filename}
     EOT
@@ -34,7 +36,7 @@ data "null_data_source" "lambda_artifact_sync" {
 }
 
 data "local_file" "build-js" {
-  filename = "build.js"
+  filename = "${path.module}/build.js"
 }
 
 #
