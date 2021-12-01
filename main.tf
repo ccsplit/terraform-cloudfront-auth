@@ -17,8 +17,7 @@ resource "null_resource" "build_lambda" {
   }
 
   provisioner "local-exec" {
-    working_dir = "${path.module}/"
-    command     = local.build_lambda_command
+    command = local.build_lambda_command
   }
 }
 
@@ -29,11 +28,10 @@ resource "null_resource" "copy_lambda_artifact" {
   }
 
   provisioner "local-exec" {
-    working_dir = path.module
-    command     = <<EOF
-    cp ${data.local_file.build-js.filename} build/cloudfront-auth/build/build.js
-    cd build/cloudfront-auth && npm i minimist && npm install && cd build && npm install && cd ../
-    cp build/cloudfront-auth/distributions/${var.cloudfront_distribution}/${var.cloudfront_distribution}.zip ${local.lambda_filename}
+    command = <<EOF
+    cp ${data.local_file.build-js.filename} ${path.module}/build/cloudfront-auth/build/build.js
+    cd ${path.module}/build/cloudfront-auth && npm i minimist && npm install && cd build && npm install && cd ../
+    cp ${path.module}/build/cloudfront-auth/distributions/${var.cloudfront_distribution}/${var.cloudfront_distribution}.zip ${local.lambda_filename}
     EOF
   }
 }
