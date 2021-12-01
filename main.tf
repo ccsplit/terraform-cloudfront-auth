@@ -5,6 +5,17 @@
 resource "null_resource" "build_lambda" {
   # Trigger a rebuild on any variable change
   triggers = {
+  }
+
+  provisioner "local-exec" {
+    command = local.build_lambda_command
+  }
+}
+
+# Copies the artifact to the root directory
+resource "null_resource" "copy_lambda_artifact" {
+  depends_on = [null_resource.build_lambda]
+  triggers = {
     vendor                  = var.auth_vendor
     cloudfront_distribution = var.cloudfront_distribution
     client_id               = var.client_id
@@ -17,23 +28,10 @@ resource "null_resource" "build_lambda" {
   }
 
   provisioner "local-exec" {
-    command = local.build_lambda_command
-  }
-}
-
-# Copies the artifact to the root directory
-resource "null_resource" "copy_lambda_artifact" {
-  depends_on = [null_resource.build_lambda]
-  triggers = {
-    build_resource = null_resource.build_lambda.id
-  }
-
-  provisioner "local-exec" {
-    command = <<EOF
-    cp ${data.local_file.build-js.filename} ${path.module}/build/cloudfront-auth/build/build.js
-    cd ${path.module}/build/cloudfront-auth && npm i minimist && npm install && cd build && npm install && cd ../
+    command = <<EOT
+    ${build_lambda_command}
     cp ${path.module}/build/cloudfront-auth/distributions/${var.cloudfront_distribution}/${var.cloudfront_distribution}.zip ${local.lambda_filename}
-    EOF
+    EOT
   }
 }
 
