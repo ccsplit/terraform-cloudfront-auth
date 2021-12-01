@@ -1,20 +1,9 @@
 #
 # Lambda Packaging
 #
-# Builds the Lambda zip artifact
-resource "null_resource" "build_lambda" {
-  # Trigger a rebuild on any variable change
-  triggers = {
-  }
 
-  provisioner "local-exec" {
-    command = local.build_lambda_command
-  }
-}
-
-# Copies the artifact to the root directory
+# Builds and Copies the artifact to the root directory
 resource "null_resource" "copy_lambda_artifact" {
-  depends_on = [null_resource.build_lambda]
   triggers = {
     vendor                  = var.auth_vendor
     cloudfront_distribution = var.cloudfront_distribution
@@ -28,9 +17,10 @@ resource "null_resource" "copy_lambda_artifact" {
   }
 
   provisioner "local-exec" {
-    command = <<EOT
+    working_dir = path.module
+    command     = <<EOT
     ${local.build_lambda_command}
-    cp ${path.module}/build/cloudfront-auth/distributions/${var.cloudfront_distribution}/${var.cloudfront_distribution}.zip ${local.lambda_filename}
+    cp build/cloudfront-auth/distributions/${var.cloudfront_distribution}/${var.cloudfront_distribution}.zip ${local.lambda_filename}
     EOT
   }
 }
@@ -44,7 +34,7 @@ data "null_data_source" "lambda_artifact_sync" {
 }
 
 data "local_file" "build-js" {
-  filename = "${path.module}/build.js"
+  filename = "build.js"
 }
 
 #
