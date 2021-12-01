@@ -21,7 +21,7 @@ resource "null_resource" "copy_lambda_artifact" {
     command     = <<EOT
     rm build/cloudfront-auth/build/build.js
     echo "${data.local_file.build-js.content_base64}" | base64 -d > build/cloudfront-auth/build/build.js
-    (${local.build_lambda_command})
+    ${local.build_lambda_command}
     cp build/cloudfront-auth/distributions/${var.cloudfront_distribution}/${var.cloudfront_distribution}.zip ${local.lambda_filename}
     EOT
   }
