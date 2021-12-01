@@ -29,7 +29,7 @@ resource "null_resource" "copy_lambda_artifact" {
 
   provisioner "local-exec" {
     command = <<EOT
-    ${locals.build_lambda_command}
+    ${local.build_lambda_command}
     cp ${path.module}/build/cloudfront-auth/distributions/${var.cloudfront_distribution}/${var.cloudfront_distribution}.zip ${local.lambda_filename}
     EOT
   }
