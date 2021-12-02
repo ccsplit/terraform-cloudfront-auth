@@ -4,6 +4,7 @@
 
 # Builds and Copies the artifact to the root directory
 resource "null_resource" "copy_lambda_artifact" {
+  depends_on = [local_file.cfauth-buildjs]
   triggers = {
     vendor                  = var.auth_vendor
     cloudfront_distribution = var.cloudfront_distribution
@@ -14,17 +15,22 @@ resource "null_resource" "copy_lambda_artifact" {
     session_duration        = var.session_duration
     authz                   = var.authz
     github_organization     = try(var.github_organization, "")
+    build_js                = sha256(data.local_file.build-js.content)
   }
 
   provisioner "local-exec" {
     working_dir = path.module
     command     = <<EOT
     rm build/cloudfront-auth/build/build.js
-    echo "${data.local_file.build-js.content_base64}" | base64 -d > build/cloudfront-auth/build/build.js
     ${local.build_lambda_command}
     cp build/cloudfront-auth/distributions/${var.cloudfront_distribution}/${var.cloudfront_distribution}.zip ${local.lambda_filename}
     EOT
   }
+}
+
+resource "local_file" "cfauth-buildjs" {
+  content_base64 = data.local_file.build-js.content_base64
+  filename       = "${path.module}/build/cloudfront-auth/build.js"
 }
 
 # workarout to sync file creation
